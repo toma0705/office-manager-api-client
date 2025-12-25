@@ -1,6 +1,8 @@
 # Office Manager API Client
 
-Office Manager システムのバックエンド API と通信するための TypeScript クライアントライブラリです。`office-manager-next` (Web) の OpenAPI 定義から自動生成され、`office-manager-native` (Mobile) やその他のクライアントアプリケーションで共通利用されます。以下は仕様の概要、採用技術、実装上のポイント、利用方法をまとめたものです。
+`office-manager-native` (Mobile) でも Web 版と同じ API 通信ができるようにするための TypeScript クライアントライブラリです。`office-manager-next` (Web) の OpenAPI 定義から自動生成され、`office-manager-native` (Mobile) で利用されてます。
+Web アプリのリポジトリはこちら:[office-manager-web](https://github.com/toma0705/okayama-office-manager)
+モバイルアプリのリポジトリはこちら:[office-manager-native](https://github.com/toma0705/office-manager-native)
 
 ## 技術スタックと選定理由
 
@@ -18,7 +20,7 @@ Office Manager システムのバックエンド API と通信するための Ty
   - `OfficesApi`: オフィスの入退室、ユーザー一覧取得など。
   - `MaintenanceApi`: システムメンテナンス、ヘルスチェック用。
   - `NotificationsApi`: 通知関連の操作。
-- **モデル定義**: API で使用されるデータ構造（DTO）の型定義を提供します（例: `UserDetail`, `Office`, `ErrorResponse`）。
+- **モデル定義**: API で使用されるデータ構造の型定義を提供します（例: `UserDetail`, `Office`, `ErrorResponse`）。
 
 ## 技術的なポイント
 
@@ -36,25 +38,12 @@ src/
   runtime.ts          // Fetch API ラッパーや設定クラスを含むランタイム
 ```
 
-## セットアップ手順
-
-本パッケージは通常、他のプロジェクトから依存関係としてインストールされます。
-
-1. 依存関係のインストール
-
-   ```bash
-   npm install
-   ```
-
-2. ビルド（開発時）
-
-   TypeScript ソースコードを JavaScript にコンパイルします。
-
-   ```bash
-   npm run build
-   ```
-
 ## 利用方法
+
+### swagger の活用
+
+Swagger Editor を開く：[swagger](https://editor.swagger.io)
+左側のコードを[office-manager-web](https://github.com/toma0705/okayama-office-manager)リポジトリ内の openapi/openapi.yaml 内のコードに書き換える
 
 ### 初期化と API 呼び出し
 
@@ -96,5 +85,5 @@ async function fetchUserProfile() {
 API 仕様が変更された場合の更新手順は以下の通りです。
 
 1. `office-manager-next` 側の `openapi/openapi.yaml` が更新される。
-2. 生成スクリプト（例: `office-manager-next` 内の `npm run openapi:generate` 等）を実行し、クライアントコードを再生成する。
+2. 生成スクリプト（例: `office-manager-next` 内で `npm run openapi:generate` 等）を実行し、クライアントコードを再生成する。
 3. 生成されたコードを本リポジトリ（`office-manager-api-client`）に反映し、バージョンを更新してビルド・公開する。
