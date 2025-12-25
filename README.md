@@ -1,7 +1,9 @@
 # Office Manager API Client
 
 `office-manager-native` (Mobile) でも Web 版と同じ API 通信ができるようにするための TypeScript クライアントライブラリです。`office-manager-next` (Web) の OpenAPI 定義から自動生成され、`office-manager-native` (Mobile) で利用されてます。
+
 Web アプリのリポジトリはこちら:[office-manager-web](https://github.com/toma0705/okayama-office-manager)
+
 モバイルアプリのリポジトリはこちら:[office-manager-native](https://github.com/toma0705/office-manager-native)
 
 ## 技術スタックと選定理由
