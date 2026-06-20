@@ -1,6 +1,6 @@
 {
   "name": "@office-manager/api-client",
-  "version": "7.7.1",
+  "version": "0.1.0",
   "private": false,
   "sideEffects": false,
   "main": "./dist/index.js",
@@ -19,7 +19,7 @@
     "tslib": "^2.6.2"
   },
   "devDependencies": {
-    "typescript": "^4.0",
+    "typescript": "^4.0 || ^5.0",
     "rimraf": "^5.0.0"
   },
   "description": "OpenAPI client for @office-manager/api-client",
@@ -27,6 +27,5 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/GIT_USER_ID/GIT_REPO_ID.git"
-  },
-  "typings": "./dist/index.d.ts"
+  }
 }

@@ -1,91 +1,141 @@
-# Office Manager API Client
+# @office-manager/api-client@0.1.0
 
-`office-manager-native` (Mobile) でも Web 版と同じ API 通信ができるようにするための TypeScript クライアントライブラリです。`office-manager-next` (Web) の OpenAPI 定義から自動生成され、`office-manager-native` (Mobile) で利用されてます。
+A TypeScript SDK client for the api.example.com API.
 
-Web アプリのリポジトリはこちら:[office-manager-web](https://github.com/toma0705/okayama-office-manager)
+## Usage
 
-モバイルアプリのリポジトリはこちら:[office-manager-native](https://github.com/toma0705/office-manager-native)
+First, install the SDK from npm.
 
-## 技術スタックと選定理由
-
-| 技術              | バージョン/ライブラリ | 選定理由                                                                                                          |
-| ----------------- | --------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| OpenAPI Generator | typescript-fetch      | API 定義書 (OpenAPI 3.0) から型安全なクライアントコードを自動生成し、手動実装のコストとミスを削減するため。       |
-| TypeScript        | ~4.0                  | API のリクエスト・レスポンス型を厳密に定義し、利用側での開発効率と安全性を高めるため。                            |
-| Fetch API         | Native                | ブラウザおよび React Native 環境で標準的に利用可能な Fetch API をベースとし、追加の依存関係を最小限に抑えるため。 |
-
-## 機能概要
-
-- **型安全な API コール**: リクエストパラメータ、レスポンスボディの型定義が完備されており、IDE の補完が効きます。
-- **API モジュール**: 機能ごとに分割された API クラスを提供します。
-  - `UsersApi`: ユーザー認証、プロフィール取得、パスワードリセットなど。
-  - `OfficesApi`: オフィスの入退室、ユーザー一覧取得など。
-  - `MaintenanceApi`: システムメンテナンス、ヘルスチェック用。
-  - `NotificationsApi`: 通知関連の操作。
-- **モデル定義**: API で使用されるデータ構造の型定義を提供します（例: `UserDetail`, `Office`, `ErrorResponse`）。
-
-## 技術的なポイント
-
-- **OpenAPI 定義からの自動生成**: `office-manager-next` プロジェクトで管理されている `openapi.yaml` を正とし、そこから自動生成されます。これにより、サーバーサイドの実装とクライアントのインターフェースの乖離を防ぎます。
-- **Isomorphic**: ブラウザ (Web) と React Native (Mobile) の両方の環境で動作するように設計されています。
-- **Configuration**: ベース URL や認証ヘッダー（Bearer Token）などを `Configuration` オブジェクトを通じて注入可能です。ミドルウェア的な処理（トークンリフレッシュ等）は利用側のラッパーで実装することを想定しています。
-
-## ディレクトリ構成
-
-```
-src/
-  apis/               // API クラス群 (UsersApi, OfficesApi 等)
-  models/             // データモデル型定義 (UserDetail, Office 等)
-  index.ts            // エントリポイント
-  runtime.ts          // Fetch API ラッパーや設定クラスを含むランタイム
+```bash
+npm install @office-manager/api-client --save
 ```
 
-## 利用方法
+Next, try it out.
 
-### swagger の活用
 
-Swagger Editor を開く：[swagger](https://editor.swagger.io)
-左側のコードを[office-manager-web](https://github.com/toma0705/okayama-office-manager)リポジトリ内の openapi/openapi.yaml 内のコードに書き換える
-
-### 初期化と API 呼び出し
-
-`Configuration` クラスを使用して、API のベース URL や認証トークンを設定します。
-
-```typescript
+```ts
 import {
   Configuration,
-  UsersApi,
-  OfficesApi,
-} from "@office-manager/api-client";
+  MaintenanceApi,
+} from '@office-manager/api-client';
+import type { WarmupGetRequest } from '@office-manager/api-client';
 
-// 設定の初期化
-const config = new Configuration({
-  basePath: "https://api.office-manager.example.com", // API のベース URL
-  accessToken: async () => {
-    // トークン取得ロジック (例: SecureStore や localStorage から取得)
-    // 必要に応じて非同期処理が可能
-    return "your-access-token";
-  },
-});
+async function example() {
+  console.log("🚀 Testing @office-manager/api-client SDK...");
+  const api = new MaintenanceApi();
 
-// API インスタンスの生成
-const usersApi = new UsersApi(config);
-
-// API 呼び出し例
-async function fetchUserProfile() {
   try {
-    const user = await usersApi.usersMeGet();
-    console.log("User:", user);
+    const data = await api.warmupGet();
+    console.log(data);
   } catch (error) {
-    console.error("Failed to fetch user:", error);
+    console.error(error);
   }
 }
+
+// Run the test
+example().catch(console.error);
 ```
 
-## 更新フロー
 
-API 仕様が変更された場合の更新手順は以下の通りです。
+## Documentation
 
-1. `office-manager-next` 側の `openapi/openapi.yaml` が更新される。
-2. 生成スクリプト（例: `office-manager-next` 内で `npm run openapi:generate` 等）を実行し、クライアントコードを再生成する。
-3. 生成されたコードを本リポジトリ（`api-client`）に反映し、バージョンを更新してビルド・公開する。
+### API Endpoints
+
+All URIs are relative to *https://api.example.com*
+
+| Class | Method | HTTP request | Description
+| ----- | ------ | ------------ | -------------
+*MaintenanceApi* | [**warmupGet**](docs/MaintenanceApi.md#warmupget) | **GET** /warmup | Prisma クライアントウォームアップ
+*MaintenanceApi* | [**warmupHead**](docs/MaintenanceApi.md#warmuphead) | **HEAD** /warmup | ヘルスチェック
+*NotificationsApi* | [**notifyPost**](docs/NotificationsApi.md#notifypostoperation) | **POST** /notify | Discord 通知送信
+*OfficesApi* | [**officesGet**](docs/OfficesApi.md#officesget) | **GET** /offices | オフィス一覧の取得
+*UsersApi* | [**usersGet**](docs/UsersApi.md#usersget) | **GET** /users | ユーザー一覧の取得
+*UsersApi* | [**usersIdDelete**](docs/UsersApi.md#usersiddelete) | **DELETE** /users/{id} | ユーザー削除
+*UsersApi* | [**usersIdGet**](docs/UsersApi.md#usersidget) | **GET** /users/{id} | ユーザー詳細の取得
+*UsersApi* | [**usersIdPatch**](docs/UsersApi.md#usersidpatchoperation) | **PATCH** /users/{id} | ユーザーノートの更新
+*UsersApi* | [**usersLoginPost**](docs/UsersApi.md#usersloginpostoperation) | **POST** /users/login | ログイン
+*UsersApi* | [**usersMeGet**](docs/UsersApi.md#usersmeget) | **GET** /users/me | 認証済みユーザー情報
+*UsersApi* | [**usersPost**](docs/UsersApi.md#userspost) | **POST** /users | ユーザー新規登録
+*UsersApi* | [**usersResetPasswordRequestPost**](docs/UsersApi.md#usersresetpasswordrequestpostoperation) | **POST** /users/reset-password-request | パスワードリセット申請
+*UsersApi* | [**usersResetPasswordTokenPost**](docs/UsersApi.md#usersresetpasswordtokenpostoperation) | **POST** /users/reset-password/{token} | パスワードリセット実行
+
+
+### Models
+
+- [EnteredUser](docs/EnteredUser.md)
+- [ErrorResponse](docs/ErrorResponse.md)
+- [MessageResponse](docs/MessageResponse.md)
+- [NotifyPost200Response](docs/NotifyPost200Response.md)
+- [NotifyPostRequest](docs/NotifyPostRequest.md)
+- [Office](docs/Office.md)
+- [UserDetail](docs/UserDetail.md)
+- [UserListItem](docs/UserListItem.md)
+- [UserSafe](docs/UserSafe.md)
+- [UserWithOffice](docs/UserWithOffice.md)
+- [UsersIdPatchRequest](docs/UsersIdPatchRequest.md)
+- [UsersLoginPost200Response](docs/UsersLoginPost200Response.md)
+- [UsersLoginPostRequest](docs/UsersLoginPostRequest.md)
+- [UsersMeGet200Response](docs/UsersMeGet200Response.md)
+- [UsersResetPasswordRequestPostRequest](docs/UsersResetPasswordRequestPostRequest.md)
+- [UsersResetPasswordTokenPostRequest](docs/UsersResetPasswordTokenPostRequest.md)
+- [WarmupGet200Response](docs/WarmupGet200Response.md)
+
+### Authorization
+
+
+Authentication schemes defined for the API:
+<a id="bearerAuth"></a>
+#### bearerAuth
+
+
+- **Type**: HTTP Bearer Token authentication (JWT)
+
+## About
+
+This TypeScript SDK client supports the [Fetch API](https://fetch.spec.whatwg.org/)
+and is automatically generated by the
+[OpenAPI Generator](https://openapi-generator.tech) project:
+
+- API version: `7.7.2`
+- Package version: `0.1.0`
+- Generator version: `7.23.0`
+- Build package: `org.openapitools.codegen.languages.TypeScriptFetchClientCodegen`
+
+The generated npm module supports the following:
+
+- Environments
+  * Node.js
+  * Webpack
+  * Browserify
+- Language levels
+  * ES5 - you must have a Promises/A+ library installed
+  * ES6
+- Module systems
+  * CommonJS
+  * ES6 module system
+
+For more information, please visit [https://example.com](https://example.com)
+
+## Development
+
+### Building
+
+To build the TypeScript source code, you need to have Node.js and npm installed.
+After cloning the repository, navigate to the project directory and run:
+
+```bash
+npm install
+npm run build
+```
+
+### Publishing
+
+Once you've built the package, you can publish it to npm:
+
+```bash
+npm publish
+```
+
+## License
+
+[]()
