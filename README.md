@@ -88,4 +88,4 @@ API 仕様が変更された場合の更新手順は以下の通りです。
 
 1. `office-manager-next` 側の `openapi/openapi.yaml` が更新される。
 2. 生成スクリプト（例: `office-manager-next` 内で `npm run openapi:generate` 等）を実行し、クライアントコードを再生成する。
-3. 生成されたコードを本リポジトリ（`office-manager-api-client`）に反映し、バージョンを更新してビルド・公開する。
+3. 生成されたコードを本リポジトリ（`api-client`）に反映し、バージョンを更新してビルド・公開する。
