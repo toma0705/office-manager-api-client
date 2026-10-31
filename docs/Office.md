@@ -9,9 +9,6 @@ Name | Type
 `id` | number
 `code` | string
 `name` | string
-`latitude` | number
-`longitude` | number
-`radiusMeters` | number
 
 ## Example
 
@@ -23,9 +20,6 @@ const example = {
   "id": null,
   "code": null,
   "name": null,
-  "latitude": null,
-  "longitude": null,
-  "radiusMeters": null,
 } satisfies Office
 
 console.log(example)

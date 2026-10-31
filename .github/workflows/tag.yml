@@ -1,0 +1,30 @@
+# main の package.json のバージョンが上がったら、v<バージョン> のタグを付ける。
+# アプリ（native）はこのタグを指定してインストールする。
+name: タグを付ける
+
+on:
+  push:
+    branches: [main]
+    paths: [package.json]
+
+permissions:
+  contents: write
+
+jobs:
+  tag:
+    name: バージョンのタグを付ける
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: まだタグがなければ付ける
+        run: |
+          tag="v$(node -p "require('./package.json').version")"
+          if git rev-parse "$tag" >/dev/null 2>&1; then
+            echo "$tag はすでにあります"
+          else
+            git tag "$tag"
+            git push origin "$tag"
+            echo "$tag を付けました"
+          fi

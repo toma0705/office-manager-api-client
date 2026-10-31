@@ -1,6 +1,7 @@
 
 # UserSafe
 
+クライアントに返すユーザー情報（パスワードのハッシュなどは含まない）
 
 ## Properties
 
@@ -14,6 +15,8 @@ Name | Type
 `entered` | boolean
 `enteredAt` | Date
 `exitedAt` | Date
+`enterPendingSince` | Date
+`exitPendingSince` | Date
 `officeId` | number
 `office` | [Office](Office.md)
 
@@ -32,6 +35,8 @@ const example = {
   "entered": null,
   "enteredAt": null,
   "exitedAt": null,
+  "enterPendingSince": null,
+  "exitPendingSince": null,
   "officeId": null,
   "office": null,
 } satisfies UserSafe

@@ -6,9 +6,7 @@
 
 Name | Type
 ------------ | -------------
-`user` | string
 `status` | string
-`officeCode` | string
 `note` | string
 
 ## Example
@@ -18,9 +16,7 @@ import type { NotifyPostRequest } from '@office-manager/api-client'
 
 // TODO: Update the object below with actual values
 const example = {
-  "user": null,
   "status": null,
-  "officeCode": null,
   "note": null,
 } satisfies NotifyPostRequest
 
