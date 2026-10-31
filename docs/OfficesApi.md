@@ -1,6 +1,6 @@
 # OfficesApi
 
-All URIs are relative to *https://api.example.com*
+All URIs are relative to *https://okayama-office-manager.vercel.app/api*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
@@ -61,7 +61,7 @@ No authorization required
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **200** | 成功 |  -  |
-| **500** | 予期しないエラーが発生しました |  -  |
+| **500** | 予期しないエラー |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 

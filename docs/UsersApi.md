@@ -1,18 +1,18 @@
 # UsersApi
 
-All URIs are relative to *https://api.example.com*
+All URIs are relative to *https://okayama-office-manager.vercel.app/api*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
 | [**usersGet**](UsersApi.md#usersget) | **GET** /users | ユーザー一覧の取得 |
 | [**usersIdDelete**](UsersApi.md#usersiddelete) | **DELETE** /users/{id} | ユーザー削除 |
 | [**usersIdGet**](UsersApi.md#usersidget) | **GET** /users/{id} | ユーザー詳細の取得 |
-| [**usersIdPatch**](UsersApi.md#usersidpatchoperation) | **PATCH** /users/{id} | ユーザーノートの更新 |
+| [**usersIdPatch**](UsersApi.md#usersidpatchoperation) | **PATCH** /users/{id} | メモの更新 |
 | [**usersLoginPost**](UsersApi.md#usersloginpostoperation) | **POST** /users/login | ログイン |
-| [**usersMeGet**](UsersApi.md#usersmeget) | **GET** /users/me | 認証済みユーザー情報 |
+| [**usersMeGet**](UsersApi.md#usersmeget) | **GET** /users/me | ログイン中のユーザーと、同じオフィスで入室中のユーザー |
 | [**usersPost**](UsersApi.md#userspost) | **POST** /users | ユーザー新規登録 |
-| [**usersResetPasswordRequestPost**](UsersApi.md#usersresetpasswordrequestpostoperation) | **POST** /users/reset-password-request | パスワードリセット申請 |
-| [**usersResetPasswordTokenPost**](UsersApi.md#usersresetpasswordtokenpostoperation) | **POST** /users/reset-password/{token} | パスワードリセット実行 |
+| [**usersResetPasswordRequestPost**](UsersApi.md#usersresetpasswordrequestpostoperation) | **POST** /users/reset-password-request | パスワード再設定の申請 |
+| [**usersResetPasswordTokenPost**](UsersApi.md#usersresetpasswordtokenpostoperation) | **POST** /users/reset-password/{token} | パスワードの再設定 |
 
 
 
@@ -22,7 +22,7 @@ All URIs are relative to *https://api.example.com*
 
 ユーザー一覧の取得
 
-登録フォームなどで利用するためのユーザー一覧を返します。&#x60;officeCode&#x60; を指定した場合は該当オフィスのユーザーのみに絞り込みます。
+ログイン中のユーザーに一覧を返す。&#x60;officeCode&#x60; を指定すると、そのオフィスのユーザーだけにする。
 
 ### Example
 
@@ -35,10 +35,14 @@ import type { UsersGetRequest } from '@office-manager/api-client';
 
 async function example() {
   console.log("🚀 Testing @office-manager/api-client SDK...");
-  const api = new UsersApi();
+  const config = new Configuration({ 
+    // Configure HTTP bearer authorization: bearerAuth
+    accessToken: "YOUR BEARER TOKEN",
+  });
+  const api = new UsersApi(config);
 
   const body = {
-    // string | フィルタ対象のオフィスコード（大文字・小文字は区別されません） (optional)
+    // string | 絞り込むオフィスのコード（大文字・小文字は区別しない） (optional)
     officeCode: officeCode_example,
   } satisfies UsersGetRequest;
 
@@ -59,7 +63,7 @@ example().catch(console.error);
 
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **officeCode** | `string` | フィルタ対象のオフィスコード（大文字・小文字は区別されません） | [Optional] [Defaults to `undefined`] |
+| **officeCode** | `string` | 絞り込むオフィスのコード（大文字・小文字は区別しない） | [Optional] [Defaults to `undefined`] |
 
 ### Return type
 
@@ -67,7 +71,7 @@ example().catch(console.error);
 
 ### Authorization
 
-No authorization required
+[bearerAuth](../README.md#bearerAuth)
 
 ### HTTP request headers
 
@@ -79,7 +83,8 @@ No authorization required
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **200** | 成功 |  -  |
-| **500** | 予期しないエラーが発生しました |  -  |
+| **401** | トークンがない、不正、または期限切れ |  -  |
+| **500** | 予期しないエラー |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 
@@ -89,6 +94,8 @@ No authorization required
 > MessageResponse usersIdDelete(id)
 
 ユーザー削除
+
+本人のログイン用トークンでのみ操作できる。プロフィール画像も削除する。
 
 ### Example
 
@@ -101,10 +108,14 @@ import type { UsersIdDeleteRequest } from '@office-manager/api-client';
 
 async function example() {
   console.log("🚀 Testing @office-manager/api-client SDK...");
-  const api = new UsersApi();
+  const config = new Configuration({ 
+    // Configure HTTP bearer authorization: bearerAuth
+    accessToken: "YOUR BEARER TOKEN",
+  });
+  const api = new UsersApi(config);
 
   const body = {
-    // number | ユーザーID
+    // number | ユーザー ID
     id: 56,
   } satisfies UsersIdDeleteRequest;
 
@@ -125,7 +136,7 @@ example().catch(console.error);
 
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **id** | `number` | ユーザーID | [Defaults to `undefined`] |
+| **id** | `number` | ユーザー ID | [Defaults to `undefined`] |
 
 ### Return type
 
@@ -133,7 +144,7 @@ example().catch(console.error);
 
 ### Authorization
 
-No authorization required
+[bearerAuth](../README.md#bearerAuth)
 
 ### HTTP request headers
 
@@ -145,16 +156,22 @@ No authorization required
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **200** | 削除成功 |  -  |
-| **500** | 予期しないエラーが発生しました |  -  |
+| **400** | リクエストが不正 |  -  |
+| **401** | トークンがない、不正、または期限切れ |  -  |
+| **403** | 本人以外のユーザーは操作できない |  -  |
+| **404** | 対象が見つからない |  -  |
+| **500** | 予期しないエラー |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 
 
 ## usersIdGet
 
-> UserDetail usersIdGet(id)
+> UserSafe usersIdGet(id)
 
 ユーザー詳細の取得
+
+本人のログイン用トークンでのみ操作できる。
 
 ### Example
 
@@ -167,10 +184,14 @@ import type { UsersIdGetRequest } from '@office-manager/api-client';
 
 async function example() {
   console.log("🚀 Testing @office-manager/api-client SDK...");
-  const api = new UsersApi();
+  const config = new Configuration({ 
+    // Configure HTTP bearer authorization: bearerAuth
+    accessToken: "YOUR BEARER TOKEN",
+  });
+  const api = new UsersApi(config);
 
   const body = {
-    // number | ユーザーID
+    // number | ユーザー ID
     id: 56,
   } satisfies UsersIdGetRequest;
 
@@ -191,15 +212,15 @@ example().catch(console.error);
 
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **id** | `number` | ユーザーID | [Defaults to `undefined`] |
+| **id** | `number` | ユーザー ID | [Defaults to `undefined`] |
 
 ### Return type
 
-[**UserDetail**](UserDetail.md)
+[**UserSafe**](UserSafe.md)
 
 ### Authorization
 
-No authorization required
+[bearerAuth](../README.md#bearerAuth)
 
 ### HTTP request headers
 
@@ -211,16 +232,21 @@ No authorization required
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **200** | 成功 |  -  |
-| **404** | 対象が見つかりません |  -  |
+| **400** | リクエストが不正 |  -  |
+| **401** | トークンがない、不正、または期限切れ |  -  |
+| **403** | 本人以外のユーザーは操作できない |  -  |
+| **404** | 対象が見つからない |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 
 
 ## usersIdPatch
 
-> UserDetail usersIdPatch(id, usersIdPatchRequest)
+> UserSafe usersIdPatch(id, usersIdPatchRequest)
 
-ユーザーノートの更新
+メモの更新
+
+本人のログイン用トークンでのみ操作できる。
 
 ### Example
 
@@ -233,10 +259,14 @@ import type { UsersIdPatchOperationRequest } from '@office-manager/api-client';
 
 async function example() {
   console.log("🚀 Testing @office-manager/api-client SDK...");
-  const api = new UsersApi();
+  const config = new Configuration({ 
+    // Configure HTTP bearer authorization: bearerAuth
+    accessToken: "YOUR BEARER TOKEN",
+  });
+  const api = new UsersApi(config);
 
   const body = {
-    // number | ユーザーID
+    // number | ユーザー ID
     id: 56,
     // UsersIdPatchRequest
     usersIdPatchRequest: ...,
@@ -259,16 +289,16 @@ example().catch(console.error);
 
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **id** | `number` | ユーザーID | [Defaults to `undefined`] |
+| **id** | `number` | ユーザー ID | [Defaults to `undefined`] |
 | **usersIdPatchRequest** | [UsersIdPatchRequest](UsersIdPatchRequest.md) |  | |
 
 ### Return type
 
-[**UserDetail**](UserDetail.md)
+[**UserSafe**](UserSafe.md)
 
 ### Authorization
 
-No authorization required
+[bearerAuth](../README.md#bearerAuth)
 
 ### HTTP request headers
 
@@ -280,7 +310,10 @@ No authorization required
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **200** | 更新成功 |  -  |
-| **500** | 予期しないエラーが発生しました |  -  |
+| **400** | リクエストが不正 |  -  |
+| **401** | トークンがない、不正、または期限切れ |  -  |
+| **403** | 本人以外のユーザーは操作できない |  -  |
+| **500** | 予期しないエラー |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 
@@ -290,6 +323,8 @@ No authorization required
 > UsersLoginPost200Response usersLoginPost(usersLoginPostRequest)
 
 ログイン
+
+ログイン用トークン（JWT、180 日有効）を発行する。
 
 ### Example
 
@@ -346,8 +381,9 @@ No authorization required
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **200** | 認証成功 |  -  |
-| **400** | リクエストが不正です |  -  |
-| **401** | 認証失敗 |  -  |
+| **400** | リクエストが不正 |  -  |
+| **401** | メールアドレスまたはパスワードが違う |  -  |
+| **500** | 予期しないエラー |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 
@@ -356,7 +392,9 @@ No authorization required
 
 > UsersMeGet200Response usersMeGet()
 
-認証済みユーザー情報
+ログイン中のユーザーと、同じオフィスで入室中のユーザー
+
+時間を過ぎた入退室の保留を確定してから返す。
 
 ### Example
 
@@ -409,19 +447,20 @@ This endpoint does not need any parameter.
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **200** | 成功 |  -  |
-| **401** | 認証エラー |  -  |
-| **404** | 対象が見つかりません |  -  |
+| **401** | トークンがない、不正、または期限切れ |  -  |
+| **404** | 対象が見つからない |  -  |
+| **500** | 予期しないエラー |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 
 
 ## usersPost
 
-> UserWithOffice usersPost(name, email, password, icon, officeCode)
+> UserSafe usersPost(name, email, password, icon, officeCode)
 
 ユーザー新規登録
 
-フォームデータを受け取り、プロフィール画像をアップロードした上でユーザーを作成します。
+プロフィール画像（JPEG・PNG・GIF・WebP・HEIC）を 200KB 以下に圧縮して保存し、ユーザーを作る。 メールアドレスは @4nonome.com のみ。 
 
 ### Example
 
@@ -445,7 +484,7 @@ async function example() {
     password: password_example,
     // Blob | プロフィール画像ファイル
     icon: BINARY_DATA_HERE,
-    // string | 登録先オフィスのコード（大文字・小文字は区別されません）
+    // string | 登録先オフィスのコード（大文字・小文字は区別しない）
     officeCode: officeCode_example,
   } satisfies UsersPostRequest;
 
@@ -470,11 +509,11 @@ example().catch(console.error);
 | **email** | `string` |  | [Defaults to `undefined`] |
 | **password** | `string` |  | [Defaults to `undefined`] |
 | **icon** | `Blob` | プロフィール画像ファイル | [Defaults to `undefined`] |
-| **officeCode** | `string` | 登録先オフィスのコード（大文字・小文字は区別されません） | [Defaults to `undefined`] |
+| **officeCode** | `string` | 登録先オフィスのコード（大文字・小文字は区別しない） | [Defaults to `undefined`] |
 
 ### Return type
 
-[**UserWithOffice**](UserWithOffice.md)
+[**UserSafe**](UserSafe.md)
 
 ### Authorization
 
@@ -490,9 +529,9 @@ No authorization required
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **201** | 作成成功 |  -  |
-| **400** | リクエストが不正です |  -  |
-| **409** | メールアドレス重複 |  -  |
-| **500** | 予期しないエラーが発生しました |  -  |
+| **400** | リクエストが不正 |  -  |
+| **409** | メールアドレスが登録済み |  -  |
+| **500** | 予期しないエラー |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 
@@ -501,7 +540,9 @@ No authorization required
 
 > MessageResponse usersResetPasswordRequestPost(usersResetPasswordRequestPostRequest)
 
-パスワードリセット申請
+パスワード再設定の申請
+
+再設定ページの URL をメールで送る（30 分有効）。登録されていないメールアドレスでも同じ応答を返す。
 
 ### Example
 
@@ -557,9 +598,9 @@ No authorization required
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-| **200** | 申請を受け付けました（対象ユーザーが存在しない場合も同様の応答） |  -  |
-| **400** | リクエストが不正です |  -  |
-| **500** | 予期しないエラーが発生しました |  -  |
+| **200** | 申請を受け付けた |  -  |
+| **400** | リクエストが不正 |  -  |
+| **500** | 予期しないエラー |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 
@@ -568,7 +609,7 @@ No authorization required
 
 > MessageResponse usersResetPasswordTokenPost(token, usersResetPasswordTokenPostRequest)
 
-パスワードリセット実行
+パスワードの再設定
 
 ### Example
 
@@ -584,7 +625,7 @@ async function example() {
   const api = new UsersApi();
 
   const body = {
-    // string | リセットトークン
+    // string | メールで届いた再設定用のトークン
     token: token_example,
     // UsersResetPasswordTokenPostRequest
     usersResetPasswordTokenPostRequest: ...,
@@ -607,7 +648,7 @@ example().catch(console.error);
 
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **token** | `string` | リセットトークン | [Defaults to `undefined`] |
+| **token** | `string` | メールで届いた再設定用のトークン | [Defaults to `undefined`] |
 | **usersResetPasswordTokenPostRequest** | [UsersResetPasswordTokenPostRequest](UsersResetPasswordTokenPostRequest.md) |  | |
 
 ### Return type
@@ -627,9 +668,9 @@ No authorization required
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-| **200** | パスワードをリセットしました |  -  |
-| **400** | リクエストが不正です |  -  |
-| **500** | 予期しないエラーが発生しました |  -  |
+| **200** | パスワードを再設定した |  -  |
+| **400** | リクエストが不正 |  -  |
+| **500** | 予期しないエラー |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 

@@ -1,40 +1,24 @@
 
-# UserWithOffice
+# CronFinalizeExitsGet200Response
 
 
 ## Properties
 
 Name | Type
 ------------ | -------------
-`id` | number
-`name` | string
-`email` | string
-`iconFileName` | string
-`note` | string
-`entered` | boolean
-`enteredAt` | Date
-`exitedAt` | Date
-`officeId` | number
-`office` | [Office](Office.md)
+`entered` | number
+`exited` | number
 
 ## Example
 
 ```typescript
-import type { UserWithOffice } from '@office-manager/api-client'
+import type { CronFinalizeExitsGet200Response } from '@office-manager/api-client'
 
 // TODO: Update the object below with actual values
 const example = {
-  "id": null,
-  "name": null,
-  "email": null,
-  "iconFileName": null,
-  "note": null,
   "entered": null,
-  "enteredAt": null,
-  "exitedAt": null,
-  "officeId": null,
-  "office": null,
-} satisfies UserWithOffice
+  "exited": null,
+} satisfies CronFinalizeExitsGet200Response
 
 console.log(example)
 
@@ -43,7 +27,7 @@ const exampleJSON: string = JSON.stringify(example)
 console.log(exampleJSON)
 
 // Parse the JSON string back to an object
-const exampleParsed = JSON.parse(exampleJSON) as UserWithOffice
+const exampleParsed = JSON.parse(exampleJSON) as CronFinalizeExitsGet200Response
 console.log(exampleParsed)
 ```
 

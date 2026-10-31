@@ -1,0 +1,21 @@
+# 生成されたコードが TypeScript としてコンパイルできるか確かめる
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    name: ビルド
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      # prepare（npm run build）も実行される
+      - run: npm ci
